@@ -11,5 +11,11 @@
   "devDependencies": {
     "@types/node": "^18",
     "nuxt": "^3.5.0"
+  },
+  "dependencies": {
+    "@appwrite.io/pink": "^0.0.6",
+    "appwrite": "^11.0.0",
+    "date-fns": "^2.30.0",
+    "vue-router": "^4.2.1"
   }
 }
