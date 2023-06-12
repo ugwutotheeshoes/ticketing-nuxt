@@ -1,0 +1,29 @@
+.box {
+  display: flex;
+  /* grid-template-columns: 2fr 2fr; */
+  justify-content: space-between;
+  align-items: center;
+}
+
+.r-card {
+  margin-right: 2rem;
+}
+
+.status {
+  border: 2px solid rgb(155, 154, 154);
+  border-radius: 25px;
+  padding: 0.5px 3px;
+  margin-right: 10rem;
+}
+
+.checkbox {
+  display: flex;
+  justify-content: space-evenly;
+  margin: 2rem 0;
+  font-size: 1.14rem;
+}
+
+.name {
+  margin-top: 2rem;
+  margin-left: 2rem;
+}

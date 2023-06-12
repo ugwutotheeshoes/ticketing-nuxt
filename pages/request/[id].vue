@@ -9,9 +9,19 @@
       </NuxtLink>
     </nav>
     <div>
-      <h2 class="eyebrow-heading-1 u-text-left u-padding-32">
-        CUSTOMER: {{ customer.name }}
-      </h2>
+      <div class="u-flex u-cross-center u-main-space-between u-padding-32">
+        <h2 class="eyebrow-heading-1 u-text-left u-padding-32">
+          CUSTOMER: {{ customer.name }}
+        </h2>
+      </div>
+      <div class="u-grid">
+        <h2 class="u-x-small u-bold u-text-right u-margin-inline-start-32">
+          {{ new Date(customer.$createdAt) }}
+        </h2>
+        <p class="text u-normal u-text-right u-padding-32">
+          {{ customer.request }}
+        </p>
+      </div>
       <ul class="list">
         <li v-for="doc in docs" :key="doc.$id">
           <div class="u-flex u-cross-center u-main-space-between">
@@ -28,7 +38,32 @@
       </ul>
       <form @submit.prevent="updateForm">
         <div class="u-grid u-cross-center u-main-center u-padding-32">
-          <label for="request">Comment:</label>
+          <span style="font-size: 20px" class="u-color-text-pink"
+            >Has this issue been resolved?</span
+          >
+          <div class="checkbox">
+            <label for="status1"
+              >Yes:
+              <input
+                type="radio"
+                v-model="status"
+                id="checkbox1"
+                value="resolved"
+              />
+            </label>
+            <label for="status2"
+              >No:
+              <input
+                type="radio"
+                v-model="status"
+                id="checkbox2"
+                value="open"
+              />
+            </label>
+          </div>
+          <label for="request" style="font-size: 20px" class="u-color-text-pink"
+            >If not, state what the current issue is:</label
+          >
           <textarea
             class="input-text"
             placeholder="Comment"
@@ -52,6 +87,7 @@
 import { useRouter, useRoute } from "vue-router";
 import { Client, Databases, ID } from "appwrite";
 import { FetchDocuments } from "@/components/FetchDocuments";
+import "@/app.css";
 export default {
   //   components: {
   //     SingleRequest,
@@ -62,6 +98,7 @@ export default {
     return {
       requestId: isIdMatch,
       request: "",
+      status: "",
       docs: [],
       customer: [],
     };
@@ -70,12 +107,12 @@ export default {
     const client = new Client();
     const databases = new Databases(client);
     client
-      .setEndpoint("OUR_API_ENDPOINT") // Your API Endpoint
-      .setProject("OUR_PROJECT_ID"); // Your project ID
+        .setEndpoint("OUR_API_ENDPOINT") // Your API Endpoint
+        .setProject("OUR_PROJECT_ID"); // Your project ID
     // Instance to fetch a customer's name
     const singleDocument = await databases.getDocument(
-      "OUR_DATABASE_ID",
-      "OUR_COLLECTION_ID",
+        "OUR_DATABASE_ID", 
+        "OUR_COLLECTION_ID",
       `${this.requestId}`
     );
     this.customer = singleDocument;
@@ -96,17 +133,31 @@ export default {
         .setProject("OUR_PROJECT_ID"); // Your project ID
       try {
         const response = await databases.createDocument(
-          "OUR_DATABASE_ID",
-          "OUR_COLLECTION_ID",
+        "OUR_DATABASE_ID", 
+        "OUR_COLLECTION_ID",
           ID.unique(),
           {
             request: this.request,
+            status: this.status,
             email: null,
             name: this.requestId,
           }
         );
         this.docs.push(response);
         this.request = "";
+      } catch (error) {
+        console.error(error);
+      }
+      try {
+        const response = await databases.updateDocument(
+        "OUR_DATABASE_ID", 
+        "OUR_COLLECTION_ID",
+          `${this.requestId}`,
+          {
+            status: this.checkbox,
+          }
+        );
+        this.checkbox = "";
       } catch (error) {
         console.error(error);
       }

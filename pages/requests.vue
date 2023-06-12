@@ -16,12 +16,18 @@
         <li class="box" v-for="doc in docs" :key="doc.$id">
           <div class="u-flex u-cross-center u-main-space-between">
             <div class="u-grid">
-              <span class="text eyebrow-heading-1"> {{ doc.name }} </span>
+              <div class="u-flex u-cross-center u-main-space-between">
+                <span class="text eyebrow-heading-1"> {{ doc.name }} </span>
+                <div class="tag">
+                  <span class="icon-check-circle" aria-hidden="true"></span>
+                  <span class="text">{{ doc.status }}</span>
+                </div>
+              </div>
               <span class="text">{{ doc.request.slice(0, 200) }}</span>
             </div>
             <NuxtLink :to="`/request/${doc.$id}`">
               <span
-                class="button icon-cheveron-right"
+                class="name button icon-cheveron-right"
                 aria-hidden="true"
               ></span>
             </NuxtLink>
@@ -36,6 +42,8 @@
 import "@appwrite.io/pink";
 import "@appwrite.io/pink-icons";
 import { FetchDocuments } from "@/components/FetchDocuments.js";
+import { Client, Databases } from "appwrite";
+import "@/app.css";
 export default {
   data() {
     return {
@@ -43,7 +51,16 @@ export default {
     };
   },
   async mounted() {
-    const response = await FetchDocuments;
+    const client = new Client();
+    const databases = new Databases(client);
+    client
+      .setEndpoint("OUR_API_ENDPOINT") // Your API Endpoint
+      .setProject("OUR_PROJECT_ID"); // Your project ID
+    // export const
+    const response = await databases.listDocuments(
+      "OUR_DATABASE_ID",
+      "OUR_COLLECTION_ID"
+    );
     console.log(response);
     const data = response.documents.slice().reverse();
     // Filter the data array and push values that serve as the beginning of a support request to the docs variable
